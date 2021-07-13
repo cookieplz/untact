@@ -11,6 +11,15 @@
 		WHERE id = #{id}
 	</select>
 	
+	<!-- 	public Article getForPrintArticle(@Param("id")int id); -->
+	<select id="getForPrintArticle" resultType="Article">
+		SELECT A.*,
+		IFNULL(M.nickname, "탈퇴회원") AS extra__writer
+		FROM article AS A
+		LEFT JOIN `member` AS M
+		ON A.memberId = M.id
+		WHERE A.id = #{id}
+	</select>
 	
 	<!-- public List<Article> getArticles(@Param(value="searchKeywordType")String searchKeywordType, @Param(value="searchKeyword")String searchKeyword); -->
 	<select id="getArticles" resultType="Article">
@@ -38,7 +47,8 @@
 		SET regDate = NOW(),
 		updateDate = NOW(),
 		title = #{title},
-		`body` = #{body}
+		`body` = #{body},
+		memberId = #{memberId}
 	</insert>
 	
 	

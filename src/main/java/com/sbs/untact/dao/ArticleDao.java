@@ -22,6 +22,8 @@ public interface ArticleDao {
 	public void modifyArticle(@Param(value="id")int id, @Param(value="title")String title, @Param(value="body")String body);
 	
 	public List<Article> getArticles(@Param(value="searchKeywordType")String searchKeywordType, @Param(value="searchKeyword")String searchKeyword);
+
+	public Article getForPrintArticle(@Param("id")int id);
 	
 
 }

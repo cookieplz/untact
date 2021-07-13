@@ -16,7 +16,8 @@ import com.sbs.untact.util.Util;
 public class ArticleService {
 	@Autowired
 	private ArticleDao articleDao;
-	
+	@Autowired
+	private MemberService memberService;
 
 	// 게시물 찾아오기
 	public Article getArticle(int id) {
@@ -51,6 +52,29 @@ public class ArticleService {
 		return new ResultData("S-1", "게시물을 수정하였습니다.", "id", id);
 		
 		
+	}
+
+	//게시물 수정시 권한 체크
+	public ResultData getActorCanModifiyRd(Article article, int actorId) {
+		if(article.getMemberId() == actorId) {
+			return new ResultData("S-1", "가능합니다.");
+		}
+		if(memberService.isAdmin(actorId)) {
+			return new ResultData("S-2", "가능합니다.");
+		}
+		return new ResultData("F-1", "권한이 없습니다.");
+	}
+
+
+	//게시글 삭제시 권한 체크
+	public ResultData getActorCanDeleteRd(Article article, int actorId) {
+		return getActorCanModifiyRd(article, actorId);	// 어차피 삭제권한이나 수정권한이나 비슷해서 재활용 개꿀
+	}
+
+	
+	// 게시글 상세보기에서 닉네임 등 자세히 표시
+	public Article getForPrintArticle(int id) {
+		return articleDao.getForPrintArticle(id);
 	}
 	
 }

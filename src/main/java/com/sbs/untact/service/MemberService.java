@@ -37,5 +37,9 @@ public class MemberService {
 				
 	}
 
+	public boolean isAdmin(int actorId) {
+		return actorId == 1;
+	}
+
 	
 }
