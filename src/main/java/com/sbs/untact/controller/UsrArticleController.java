@@ -47,6 +47,10 @@ public class UsrArticleController {
 		if(searchKeyword != null) {
 			searchKeyword =searchKeyword.trim();
 		}
+		//------------------------------------절취선-------------------------------------
+		if(searchKeyword == null) {
+			searchKeywordType = null;
+		}
 		return articleService.getArticles(searchKeywordType, searchKeyword);
 	}
 	

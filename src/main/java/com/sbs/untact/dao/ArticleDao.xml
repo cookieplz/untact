@@ -17,14 +17,16 @@
 		SELECT *
 		FROM article
 		WHERE 1
-		<if test="searchKeywordType == 'title'">
-			AND title LIKE CONCAT('%', #{searchKeyword}, '%')
-		</if>
-		<if test="searchKeywordType == 'body'">
-			AND `body` LIKE CONCAT('%', #{searchKeyword}, '%')
-		</if>
-		<if test="searchKeywordType == 'titleAndBody'">
-			AND (title LIKE CONCAT('%', #{searchKeyword}, '%') OR `body` LIKE CONCAT('%', #{searchKeyword}, '%'))
+		<if test="searchKeyword != null">
+			<if test="searchKeywordType == 'title'">
+				AND title LIKE CONCAT('%', #{searchKeyword}, '%')
+			</if>
+			<if test="searchKeywordType == 'body'">
+				AND `body` LIKE CONCAT('%', #{searchKeyword}, '%')
+			</if>
+			<if test="searchKeywordType == 'titleAndBody'">
+				AND (title LIKE CONCAT('%', #{searchKeyword}, '%') OR `body` LIKE CONCAT('%', #{searchKeyword}, '%'))
+			</if>
 		</if>
 		ORDER BY id DESC
 	</select>
@@ -50,10 +52,18 @@
 	<!-- public void modifyArticle(@Param(value="id")int id, @Param(value="title")String title, @Param(value="body")String body); -->
 	<update id="modifyArticle">
 		UPDATE article
-		SET updateDate = NOW(),
-		title = #{title},
-		`body` = #{body}
-		WHERE id = #{id} 
+		<set>
+			<if test="title != null || body != null">
+				updateDate = NOW(),
+			</if>
+			<if test="title != null">
+				title = #{title},
+			</if>
+			<if test="body != null">
+				`body` = #{body}
+			</if>
+		</set>
+			WHERE id = #{id} 
 	</update>	
 	
 </mapper>
