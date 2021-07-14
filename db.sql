@@ -199,3 +199,31 @@ ALTER TABLE reply ad`reply`d COLUMN `relTypeCode` CHAR(20) NOT NULL AFTER update
 UPDATE reply
 SET relTypeCode = 'article';
 WHERE relTypeCode = '';
+
+
+# left join 테스트
+		SELECT R.*,
+		IFNULL(M.nickname, "탈퇴회원") AS extra__writer
+		FROM reply AS R
+		LEFT JOIN `member` AS M
+		ON R.memberId = M.id
+		WHERE 1
+		AND R.relTypeCode = 'article'
+		AND R.relId = 1;
+		
+		
+DESC MEMBER;
+
+# member 테이블에 authKey 칼럼 추가, 인덱스도 
+ALTER TABLE `member` ADD COLUMN authKey CHAR(80) NOT NULL AFTER loginPw;
+ALTER TABLE `untact`.`member` ADD UNIQUE INDEX(`authKey`);
+	
+# 기존회원의 authKey 데이터 채우기	
+UPDATE `member`
+SET authKey = CONCAT("authKey1__", UUID(), "__", RAND())
+WHERE authKey = '';
+
+
+
+SELECT * FROM `member`	
+

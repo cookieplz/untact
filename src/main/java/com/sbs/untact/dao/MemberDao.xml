@@ -15,7 +15,8 @@
 			`name` = #{name},
 			nickname = #{nickname},
 			cellphoneNo = #{cellphoneNo},
-			email = #{email}
+			email = #{email},
+			authKey = CONCAT("authKey1__", UUID(), "__", RAND())
 	</insert>
 
 	<!-- 	public Member getMember(@Param(value="id") int id); -->
@@ -33,6 +34,12 @@
 		WHERE loginId = #{loginId}
 	</select>
 	
+	<!-- public Member getMemberByAuthKey(@Param("authKey")String authKey); -->
+	<select id="getMemberByAuthKey" resultType="Member">
+		SELECT *
+		FROM `member`
+		WHERE authKey = #{authKey}
+	</select>
 	
 	<!-- public void modifyMember(Map<String, Object> param); -->
 	<update id="modifyMember">

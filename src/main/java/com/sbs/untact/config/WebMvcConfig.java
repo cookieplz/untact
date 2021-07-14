@@ -35,15 +35,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {	//청원경찰 설치
 		// beforeActionInterceptor 인터셉터가 모든 액션 실행전에 실행되도록 처리
 		registry.addInterceptor(beforeActionInterceptor).addPathPatterns("/**").excludePathPatterns("/resource/**");
-	
-		
+			
 		// 어드민 필요
 		registry.addInterceptor(needAdminInterceptor)
 			.addPathPatterns("/adm/**")
 			.excludePathPatterns("/adm/member/login")
 			.excludePathPatterns("/adm/member/doLogin");
-		
-		
+			
 		// 로그인 필요
 		registry.addInterceptor(needLoginInterceptor)
 			.addPathPatterns("/**")

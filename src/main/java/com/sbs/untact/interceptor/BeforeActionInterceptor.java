@@ -20,20 +20,39 @@ public class BeforeActionInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
+		
+		int loginedMemberId = 0;
+		Member loginedMember = null;
+		
+		String authKey = request.getParameter("authKey");
+		
+		if(authKey != null && authKey.length() > 0) {
+			loginedMember = memberService.getMemberByAuthKey(authKey);
+			
+			if(loginedMember == null) {
+				request.setAttribute("authKeyStatus", "invalid");	// authKey 넘어왔는데 이상함
+			}else {
+				request.setAttribute("authKeyStatus", "valid");	// authKey 올바르게 잘 넘어옴
+				loginedMemberId = loginedMember.getId();
+			}
+			
+		}else {		
+			// 일단 정지! 모두 세션꺼내보세요~~~~
+			HttpSession session = request.getSession();
+			request.setAttribute("authKeyStatus", "none");	// authKey 없음
+			if(session.getAttribute("loginedMemberId") != null) {
+				loginedMemberId = (int)session.getAttribute("loginedMemberId");
+				loginedMember = memberService.getMember(loginedMemberId);		
+			}
+		}
 
-		// 일단 정지! 모두 세션꺼내보세요~~~~ 모든사람에게 외쳤다...
-		HttpSession session = request.getSession();
-
-		// 로그인 여부에 관련된 정보를 request에 담는다. 아래의 네 가지 정보가 담긴 민증 꺼내보시오
+		
+		// 로그인 여부에 관련된 정보를 request에 담는다. 
 		boolean isLogined = false;	// 로그인 했냐 안했냐
 		boolean isAdmin = false;	// 너 관리자냐 아니냐
-		int loginedMemberId = 0;	// 너가 로그인 했으면 너가 대체 누구냐
-		Member loginedMember = null;	// 로그인한 사람의 자세한 정보
 
-		if (session.getAttribute("loginedMemberId") != null) {
-			loginedMemberId = (int) session.getAttribute("loginedMemberId");
-			isLogined = true;
-			loginedMember = memberService.getMember(loginedMemberId);
+		if (loginedMember != null) {
+			isLogined = true;		
 			isAdmin = memberService.isAdmin(loginedMemberId);
 		}
 

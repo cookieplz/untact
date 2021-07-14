@@ -28,6 +28,11 @@ import com.sbs.untact.service.MemberService;
 	@Autowired
 	private MemberService memberService;
 
+	@RequestMapping("/adm/member/login")
+	public String login() {
+		return "adm/member/login";
+	}
+	
 
 	// 로그인
 	@RequestMapping("/adm/member/doLogin")
