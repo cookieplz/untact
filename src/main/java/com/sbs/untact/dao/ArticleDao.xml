@@ -41,6 +41,29 @@
 	</select>
 	
 	
+	<!-- public List<Article> getforprintArticles(@Param(value="searchKeywordType")String searchKeywordType, @Param(value="searchKeyword") String searchKeyword); -->
+	<select id="getForPrintArticles" resultType="Article">
+		SELECT A.*,
+		IFNULL(M.nickname, "탈퇴회원") AS extra__writer
+		FROM article AS
+		A
+		LEFT JOIN `member` AS M
+		ON A.memberId = M.id
+		WHERE 1
+		<if test="searchKeywordType == 'title'">
+			AND A.title LIKE CONCAT('%', #{searchKeyword}, '%')
+		</if>
+		<if test="searchKeywordType == 'body'">
+			AND A.`body` LIKE CONCAT('%', #{searchKeyword}, '%')
+		</if>
+		<if test="searchKeywordType == 'titleAndBody'">
+			AND (A.title LIKE CONCAT('%', #{searchKeyword}, '%') OR
+			A.`body` LIKE CONCAT('%', #{searchKeyword}, '%'))
+		</if>
+		ORDER BY A.id DESC
+	</select>
+	
+	
 	<!-- public void addArticle(Map<String, Object> param); -->
 	<insert id="addArticle" useGeneratedKeys="true" keyProperty="id"> <!-- INSERT됨과 동시에 생성된 키를 가져오게 하는 userGeneratedKeys속성. auto_increment한 값을 바로 가져옴 -->
 		INSERT INTO article

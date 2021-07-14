@@ -62,6 +62,18 @@ nickname = "user",
 cellphoneNo = "01012341234",
 email = "jangka@gmail.com";
 
+INSERT INTO `member`
+SET regDate = NOW(),
+updateDate = NOW(),
+loginId = "user2",
+loginPw = "user2",
+`name` = "user2",
+nickname = "user2",
+cellphoneNo = "010888888",
+email = "tdfwa@gmail.com";
+
+TRUNCATE `member`;
+
 SELECT * FROM `member`;
 
 #로그인 ID로 검색했을 때
@@ -74,6 +86,15 @@ ALTER TABLE article ADD COLUMN memberId INT(10) UNSIGNED NOT NULL AFTER updateDa
 
 # 기존 게시물의 작성자를 회원1로 지정
 UPDATE article SET memberId = 1 WHERE memberId = 0;
+
+
+#LEFT JOIN 연습
+SELECT A.*,
+IFNULL(M.nickname, "탈퇴회원") AS extra__writer
+FROM article AS A
+LEFT JOIN `member` AS M
+ON A.memberId = M.id
+WHERE A.ID = 1;
 
 
 

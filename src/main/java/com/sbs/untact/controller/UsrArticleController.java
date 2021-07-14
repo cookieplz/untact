@@ -42,7 +42,7 @@ public class UsrArticleController {
 	// 게시물 리스트 출력
 	@RequestMapping("/usr/article/list")
 	@ResponseBody
-	public List<Article> showList(/*@RequestParam(defaultValue = "titleAndBody")*/ String searchKeywordType, String searchKeyword) {
+	public ResultData showList(/*@RequestParam(defaultValue = "titleAndBody")*/ String searchKeywordType, String searchKeyword) {
 		if(searchKeywordType != null) {
 			searchKeywordType = searchKeywordType.trim();
 		}
@@ -60,7 +60,8 @@ public class UsrArticleController {
 		if(searchKeyword == null) {
 			searchKeywordType = null;
 		}
-		return articleService.getArticles(searchKeywordType, searchKeyword);
+		List<Article> articles = articleService.getForPrintArticles(searchKeywordType, searchKeyword);
+		return new ResultData("S-1", "성공", "articles", articles);
 	}
 	
 	
@@ -69,10 +70,7 @@ public class UsrArticleController {
 	@ResponseBody
 	public ResultData doAdd(@RequestParam Map<String, Object> param, HttpSession session) {
 		int loginedMemberId = Util.getAsInt(session.getAttribute("loginedMemberId"), 0);
-		if(loginedMemberId == 0) {
-			return new ResultData("F-2", "로그인 후 이용해주세요. ");
-		}
-		
+
 		if(param.get("title") == null) {
 			return new ResultData("F-1", "title을 입력해주세요. 제발");
 		}
@@ -89,9 +87,6 @@ public class UsrArticleController {
 	@ResponseBody
 	public ResultData doDelete(Integer id, HttpSession session) {
 		int loginedMemberId = Util.getAsInt(session.getAttribute("loginedMemberId"), 0);
-		if(loginedMemberId == 0) {
-			return new ResultData("F-2", "로그인 후 이용해주세요. ");
-		}
 		
 		if(id == null) {
 			return new ResultData("F-1", "id를 입력해주세요. 제발");
@@ -112,9 +107,6 @@ public class UsrArticleController {
 	@ResponseBody
 	public ResultData doModify(Integer id, String title, String body, HttpSession session){
 		int loginedMemberId = Util.getAsInt(session.getAttribute("loginedMemberId"), 0);
-		if(loginedMemberId == 0) {
-			return new ResultData("F-2", "로그인 후 이용해주세요. ");
-		}
 		
 		if(id == null) {
 			return new ResultData("F-1" , "id를 입력해주세요.");

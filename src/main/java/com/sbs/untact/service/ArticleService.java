@@ -76,5 +76,9 @@ public class ArticleService {
 	public Article getForPrintArticle(int id) {
 		return articleDao.getForPrintArticle(id);
 	}
-	
+
+	// 게시글 리스트에서 닉네임 등 자세히 표시
+	public List<Article> getForPrintArticles(String searchKeywordType, String searchKeyword) {
+		return articleDao.getForPrintArticles(searchKeywordType, searchKeyword);
+	}
 }
