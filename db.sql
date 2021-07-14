@@ -159,6 +159,7 @@ memberId INT(10) UNSIGNED NOT NULL,
 `body` TEXT NOT NULL
 );
 
+
 DESC reply;
 
 # 댓글 테스트 데이터생성
@@ -185,3 +186,16 @@ memberId = 2,
 
 SELECT * FROM reply;
 
+# 인덱스 지정을 꼭 까먹지 말아야한다......알겄지.. 고속 검색을 위해서 인덱스 걸기
+ALTER TABLE `untact`.`reply` ADD KEY (`relTypeCode` , `relId`); 
+
+
+# 게시물 전용이 아닌 범용 댓글로 구조 변경
+ALTER TABLE reply CHANGE `articleId` `relId` INT(10) UNSIGNED NOT NULL;
+ALTER TABLE reply ad`reply`d COLUMN `relTypeCode` CHAR(20) NOT NULL AFTER updateDate;
+
+
+# 범용댓글로 구조 변경 후 기존 댓글 relTypeCode 수정
+UPDATE reply
+SET relTypeCode = 'article';
+WHERE relTypeCode = '';
