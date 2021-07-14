@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.sbs.untact.dao.ArticleDao;
 import com.sbs.untact.dto.Article;
+import com.sbs.untact.dto.Board;
 import com.sbs.untact.dto.ResultData;
 import com.sbs.untact.util.Util;
 
@@ -78,7 +79,21 @@ public class ArticleService {
 	}
 
 	// 게시글 리스트에서 닉네임 등 자세히 표시
-	public List<Article> getForPrintArticles(String searchKeywordType, String searchKeyword) {
-		return articleDao.getForPrintArticles(searchKeywordType, searchKeyword);
+	public List<Article> getForPrintArticles(int boardId, String searchKeywordType, String searchKeyword, int page, int itemsInApage) {
+		int limitStart = (page - 1) * itemsInApage;
+		int limitTake = itemsInApage;
+		return articleDao.getForPrintArticles(boardId, searchKeywordType, searchKeyword, limitStart, limitTake);
+	}
+
+	// 게시판 가져오기
+	public Board getBoard(int id) {
+		return articleDao.getBoard(id);
+	}
+
+	// 댓글 작성하기
+	public ResultData addReply(Map<String, Object> param) {
+		articleDao.addReply(param);
+		int id = Util.getAsInt(param.get("id"), 0);
+		return new ResultData("S-1", "성공하였습니다", "id", id);
 	}
 }

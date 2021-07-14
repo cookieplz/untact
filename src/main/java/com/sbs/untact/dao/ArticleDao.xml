@@ -4,6 +4,13 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sbs.untact.dao.ArticleDao">
+	<!--public Board getBoard(@Param("id") int id); -->
+	<select id="getBoard" resultType="Board">
+		SELECT *
+		FROM board
+		WHERE id = #{id}
+	</select>
+	
 	<!-- public Article getArticle(@Param(value="id") int id); -->
 	<select id="getArticle" resultType="Article">
 		SELECT *
@@ -50,6 +57,9 @@
 		LEFT JOIN `member` AS M
 		ON A.memberId = M.id
 		WHERE 1
+		<if test="boardId != null">
+			AND A.boardId = #{boardId}
+		</if>
 		<if test="searchKeywordType == 'title'">
 			AND A.title LIKE CONCAT('%', #{searchKeyword}, '%')
 		</if>
@@ -60,7 +70,10 @@
 			AND (A.title LIKE CONCAT('%', #{searchKeyword}, '%') OR
 			A.`body` LIKE CONCAT('%', #{searchKeyword}, '%'))
 		</if>
-		ORDER BY A.id DESC
+			ORDER BY A.id DESC
+		<if test="limitStart != null and limitTake != null">
+			LIMIT #{limitStart}, #{limitTake}
+		</if>	
 	</select>
 	
 	
@@ -86,7 +99,7 @@
 	<update id="modifyArticle">
 		UPDATE article
 		<set>
-			<if test="title != null || body != null">
+			<if test="title != null or body != null">
 				updateDate = NOW(),
 			</if>
 			<if test="title != null">
@@ -98,5 +111,16 @@
 		</set>
 			WHERE id = #{id} 
 	</update>	
+	
+	<!-- public void addReply(Map<String, Object> param); -->
+	<insert id="addReply" useGeneratedKeys="true" keyProperty="id"> <!-- INSERT됨과 동시에 생성된 키를 가져오게 하는 userGeneratedKeys속성. auto_increment한 값을 바로 가져옴 -->
+		INSERT INTO reply
+		SET regDate = NOW(),
+		updateDate = NOW(),
+		articleId = #{articleId},
+		`body` = #{body},
+		memberId = #{memberId}
+	</insert>
+	
 	
 </mapper>

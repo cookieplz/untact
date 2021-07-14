@@ -81,10 +81,10 @@ ALTER TABLE `member` ADD UNIQUE INDEX(`loginId`);
 
 DESC article;
 
-#게시물 테이블에 회원번호 칼럼 추가
+#게시물 테이블에 회원번호 칼럼 추가!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ALTER TABLE article ADD COLUMN memberId INT(10) UNSIGNED NOT NULL AFTER updateDate;
 
-# 기존 게시물의 작성자를 회원1로 지정
+# 기존 게시물의 작성자를 회원1로 지정!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 UPDATE article SET memberId = 1 WHERE memberId = 0;
 
 
@@ -97,4 +97,91 @@ ON A.memberId = M.id
 WHERE A.ID = 1;
 
 
+# 테스트 게시물 데이터 추가
+INSERT INTO article
+(regDate, updateDate, memberId, title, `body`)
+SELECT NOW(), NOW(), FLOOR(RAND()*2) + 1, CONCAT('제목', FLOOR(RAND()*1000) + 1), CONCAT('내용', FLOOR(RAND()*1000) + 1)
+FROM article;
+
+DESC article;
+
+SELECT * FROM article;
+
+SELECT COUNT(*) FROM article;
+
+
+
+# 게시판 테이블 추가 
+CREATE TABLE board(
+id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+regDate DATETIME NOT NULL,
+updateDate DATETIME NOT NULL,
+`code` CHAR(20) UNIQUE NOT NULL,
+`name` CHAR(20) UNIQUE NOT NULL
+);
+
+# 공지사항 게시판 추가
+INSERT INTO board
+SET regDate = NOW(),
+updateDate = NOW(),
+`code` = 'notice',
+`name` = '공지사항';
+
+# 자유 게시판 추가
+INSERT INTO board
+SET regDate = NOW(),
+updateDate = NOW(),
+`code` = 'free',
+`name` = '자유';
+
+#기존 게시물 테이블에 게시판 번호 칼럼 추가, updateDate 칼럼 뒤에~!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ALTER TABLE article ADD COLUMN boardId INT(10) UNSIGNED NOT NULL AFTER updateDate;
+
+#기존 게시물들에임의로 랜덤 boardId 부여해서 보드아이디가 0이었던것을 수습함 
+UPDATE article
+SET boardId = FLOOR(RAND()*2) + 1
+WHERE boardId = 0;
+
+# 공지사항인 게시물들
+SELECT COUNT(*) FROM article WHERE boardId = 1;
+
+# 자유게시판인 게시물들
+SELECT COUNT(*) FROM article WHERE boardId = 2;
+
+
+# 댓글 테이블 추가 
+CREATE TABLE reply(
+id INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+regDate DATETIME NOT NULL,
+updateDate DATETIME NOT NULL,
+articleId INT(10) UNSIGNED NOT NULL,
+memberId INT(10) UNSIGNED NOT NULL,
+`body` TEXT NOT NULL
+);
+
+DESC reply;
+
+# 댓글 테스트 데이터생성
+INSERT INTO reply
+SET regDate = NOW(),
+updateDate = NOW(),
+articleId = 1,
+memberId = 1,
+`body` = "댓글내용1 입니다.";
+
+INSERT INTO reply
+SET regDate = NOW(),
+updateDate = NOW(),
+articleId = 1,
+memberId = 2,
+`body` = "댓글내용2 입니다.";
+
+INSERT INTO reply
+SET regDate = NOW(),
+updateDate = NOW(),
+articleId = 2,
+memberId = 2,
+`body` = "댓글내용3 입니다.";
+
+SELECT * FROM reply;
 

@@ -1,6 +1,7 @@
 package com.sbs.untact.controller;
 
 import java.util.List;
+
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sbs.untact.dto.Article;
+import com.sbs.untact.dto.Board;
 import com.sbs.untact.dto.ResultData;
 import com.sbs.untact.service.ArticleService;
 import com.sbs.untact.util.Util;
@@ -42,7 +44,12 @@ public class UsrArticleController {
 	// 게시물 리스트 출력
 	@RequestMapping("/usr/article/list")
 	@ResponseBody
-	public ResultData showList(/*@RequestParam(defaultValue = "titleAndBody")*/ String searchKeywordType, String searchKeyword) {
+	public ResultData showList(@RequestParam(defaultValue = "1") int boardId, String searchKeywordType, String searchKeyword, @RequestParam(defaultValue = "1") int page) {
+		Board board = articleService.getBoard(boardId);
+		if(board == null) {
+			return new ResultData("F-1", "존재하지 않는 게시판 입니다.");
+		}
+		
 		if(searchKeywordType != null) {
 			searchKeywordType = searchKeywordType.trim();
 		}
@@ -60,7 +67,8 @@ public class UsrArticleController {
 		if(searchKeyword == null) {
 			searchKeywordType = null;
 		}
-		List<Article> articles = articleService.getForPrintArticles(searchKeywordType, searchKeyword);
+		int itemsInAPage = 20;	//한페이당 보여주는 게시물개수
+		List<Article> articles = articleService.getForPrintArticles(boardId, searchKeywordType, searchKeyword, page, itemsInAPage);
 		return new ResultData("S-1", "성공", "articles", articles);
 	}
 	
@@ -127,6 +135,24 @@ public class UsrArticleController {
 			return actorCanModifyRd;
 		}
 		return articleService.modifyArticle(id, title, body);
+	}
+	
+	
+	// 댓글 추가
+	@RequestMapping("/usr/article/doAddReply")
+	@ResponseBody
+	public ResultData doAddReply(@RequestParam Map<String, Object> param, HttpSession session) {
+		int loginedMemberId = Util.getAsInt(session.getAttribute("loginedMemberId"), 0);
+
+		if(param.get("body") == null) {
+			return new ResultData("F-1", "body를 입력해주세요. 제발");
+		}
+		if(param.get("articleId") == null) {
+			return new ResultData("F-1", "articleId를 입력해주세요.");
+		}
+		
+		param.put("memberId", loginedMemberId);
+		return articleService.addReply(param);
 	}
 	
 }
