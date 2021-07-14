@@ -41,5 +41,9 @@ public class MemberService {
 		return actorId == 1;
 	}
 
+	// isAdmin 메서드 오버로딩
+	public boolean isAdmin(Member actor) {
+		return isAdmin(actor.getId());
+	}
 	
 }

@@ -18,7 +18,7 @@ import com.sbs.untact.service.ReplyService;
 import com.sbs.untact.util.Util;
 
 @Controller
-public class UsrReplyController {
+public class AdmReplyController {
 
 		@Autowired
 		ReplyService replyService;
@@ -28,7 +28,7 @@ public class UsrReplyController {
 		
 		
 		// 댓글 리스트 출력
-		@RequestMapping("/usr/reply/list")
+		@RequestMapping("/adm/reply/list")
 		@ResponseBody
 		public ResultData showList(String relTypeCode, Integer relId) {	// 관련된 타입코드, 관련된 아이디. articleId로 하지않고 relId로 함으로써 글뿐만 아니라 어디에도 댓글을 달 수 있음 예컨대 특정 상품, 앱에 달린 리뷰.  
 			if(relTypeCode == null) {
@@ -51,7 +51,7 @@ public class UsrReplyController {
 		
 		
 		// 댓글 삭제하기
-		@RequestMapping("/usr/reply/doDelete")
+		@RequestMapping("/adm/reply/doDelete")
 		@ResponseBody
 		public ResultData doDelete(Integer id, HttpServletRequest req) {	// 비포엑션에서 세션에 관해 다 때려넣었기 때문에 여기서는 걍 받기만 하면 됨
 			int loginedMemberId = (int)req.getAttribute("loginedMemberId");
@@ -74,7 +74,7 @@ public class UsrReplyController {
 		
 		
 		// 댓글 수정하기
-		@RequestMapping("/usr/reply/doModify")
+		@RequestMapping("/adm/reply/doModify")
 		@ResponseBody
 		public ResultData doModify(Integer id, String body, HttpServletRequest req) {	// 비포엑션에서 세션에 관해 다 때려넣었기 때문에 여기서는 걍 받기만 하면 됨
 			int loginedMemberId = (int)req.getAttribute("loginedMemberId");

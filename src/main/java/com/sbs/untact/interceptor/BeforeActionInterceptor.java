@@ -21,8 +21,6 @@ public class BeforeActionInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 
-		System.out.println("실행되나?");
-
 		// 일단 정지! 모두 세션꺼내보세요~~~~ 모든사람에게 외쳤다...
 		HttpSession session = request.getSession();
 

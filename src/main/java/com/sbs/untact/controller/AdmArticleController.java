@@ -19,14 +19,14 @@ import com.sbs.untact.service.ArticleService;
 
 
 @Controller
-public class UsrArticleController {
+public class AdmArticleController {
 
 	@Autowired
 	private ArticleService articleService;
 	
 
 	// 게시물 상세보기
-	@RequestMapping("/usr/article/detail")
+	@RequestMapping("/adm/article/detail")
 	@ResponseBody
 	public ResultData showDetail(Integer id) {
 		if(id == null) {
@@ -41,7 +41,7 @@ public class UsrArticleController {
 	
 	
 	// 게시물 리스트 출력
-	@RequestMapping("/usr/article/list")
+	@RequestMapping("/adm/article/list")
 	@ResponseBody
 	public ResultData showList(@RequestParam(defaultValue = "1") int boardId, String searchKeywordType, String searchKeyword, @RequestParam(defaultValue = "1") int page) {
 		Board board = articleService.getBoard(boardId);
@@ -73,7 +73,7 @@ public class UsrArticleController {
 	
 	
 	// 게시물 추가
-	@RequestMapping("/usr/article/doAdd")
+	@RequestMapping("/adm/article/doAdd")
 	@ResponseBody
 	public ResultData doAdd(@RequestParam Map<String, Object> param, HttpServletRequest req) {
 		int loginedMemberId = (int)req.getAttribute("loginedMemberId");
@@ -90,7 +90,7 @@ public class UsrArticleController {
 	
 
 	// 게시물 삭제하기
-	@RequestMapping("/usr/article/doDelete")
+	@RequestMapping("/adm/article/doDelete")
 	@ResponseBody
 	public ResultData doDelete(Integer id, HttpServletRequest req) {
 		int loginedMemberId = (int)req.getAttribute("loginedMemberId");
@@ -110,7 +110,7 @@ public class UsrArticleController {
 		}
 			
 
-	@RequestMapping("/usr/article/doModify")
+	@RequestMapping("/adm/article/doModify")
 	@ResponseBody
 	public ResultData doModify(Integer id, String title, String body, HttpServletRequest req){
 		int loginedMemberId = (int)req.getAttribute("loginedMemberId");
@@ -138,7 +138,7 @@ public class UsrArticleController {
 	
 	
 	// 댓글 추가
-	@RequestMapping("/usr/article/doAddReply")
+	@RequestMapping("/adm/article/doAddReply")
 	@ResponseBody
 	public ResultData doAddReply(@RequestParam Map<String, Object> param, HttpServletRequest req) {
 		int loginedMemberId = (int)req.getAttribute("loginedMemberId");
