@@ -57,13 +57,57 @@ public class UsrMemberController {
 		}
 		return memberService.join(param);
 	}
-
 	
+	
+	// authKey가 올바른지 확인하여 유효한 회원인지 확인
+	@RequestMapping("/usr/member/memberByAuthKey")
+	@ResponseBody
+	public ResultData showMemberByAuthKey(String authKey) {
+		if(authKey == null) {
+			return new ResultData("F-1", "authKey를 입력해주세요.");
+		}
+		Member existingMember = memberService.getMemberByAuthKey(authKey);
+		
+		if(existingMember == null) {
+			return new ResultData("F-2", "유효하지 않은 authKey 입니다.");
+		}
+		
+		return new ResultData("S-1", String.format("유효한 회원입니다."), "member", existingMember);      
+	}
+	
+	
+	// authKey 로그인
+		@RequestMapping("/usr/member/authKey")
+		@ResponseBody
+		public ResultData showAuthKey(String loginId, String loginPw) {
+		//------------------------------------절취선----------------------------------
+			if(loginId == null) {
+				return new ResultData("F-1", "아이디를 입력해주세요. 제발");
+			}
+			
+			Member existingMember= memberService.getMemberByLoginId(loginId);
+			
+			if(existingMember == null) {
+				return new ResultData("F-2", String.format("%s (은)는 존재하지 않는 아이디 입니다.", loginId));   
+			}
+			
+			if(loginPw == null) {
+				return new ResultData("F-1", "비밀번호를 입력해주세요. 제발");
+			}
+		
+			if(existingMember.getLoginPw().equals(loginPw) == false) {
+				return new ResultData("F-3", "비밀번호가 일치하지 않습니다.");
+			}
+		
+			return new ResultData("S-1", String.format("%s님 환영합니다♥", existingMember.getNickname()), 
+													"authKey", existingMember.getAuthKey(), "id", existingMember.getId(), "nickname", existingMember.getNickname());       
+		}
+	
+		
 	// 로그인
 	@RequestMapping("/usr/member/doLogin")
 	@ResponseBody
 	public ResultData doLogin(String loginId, String loginPw, /*세션~*/HttpSession session) {
-	//------------------------------------절취선----------------------------------
 		if(loginId == null) {
 			return new ResultData("F-1", "아이디를 입력해주세요. 제발");
 		}

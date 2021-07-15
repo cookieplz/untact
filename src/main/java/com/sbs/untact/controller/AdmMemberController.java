@@ -20,6 +20,7 @@ import com.sbs.untact.dto.Member;
 import com.sbs.untact.dto.ResultData;
 import com.sbs.untact.service.ArticleService;
 import com.sbs.untact.service.MemberService;
+import com.sbs.untact.util.Util;
 
 
 	@Controller
@@ -37,34 +38,38 @@ import com.sbs.untact.service.MemberService;
 	// 로그인
 	@RequestMapping("/adm/member/doLogin")
 	@ResponseBody
-	public ResultData doLogin(String loginId, String loginPw, /*세션~*/HttpSession session) {
-	//------------------------------------절취선----------------------------------
-		if(loginId == null) {
-			return new ResultData("F-1", "아이디를 입력해주세요. 제발");
-		}
-		Member existingMember= memberService.getMemberByLoginId(loginId);
-		if(existingMember == null) {
-			return new ResultData("F-2", String.format("%s (은)는 존재하지 않는 아이디 입니다.", loginId));   
+	public String doLogin(String loginId, String loginPw, String redirectUrl, /*세션~*/HttpSession session) {
+		if (loginId == null) {
+			return Util.msgAndBack("아이디를 입력해주세요.");
 		}
 		
-		if(loginPw == null) {
-			return new ResultData("F-1", "비밀번호를 입력해주세요. 제발");
+		Member existingMember = memberService.getMemberByLoginId(loginId);
+
+		if (existingMember == null) {
+			return Util.msgAndBack("존재하지 않는 아이디 입니다.");
 		}
-	
-		if(existingMember.getLoginPw().equals(loginPw) == false) {
-			return new ResultData("F-3", "비밀번호가 일치하지 않습니다.");
+
+		if (loginPw == null) {
+			return Util.msgAndBack("비밀번호를 입력해주세요.");
 		}
-		if(memberService.isAdmin(existingMember) == false) {
-			return new ResultData("F-4", "관리자만 접속할 수 있는 페이지 입니다.");
+
+		if (existingMember.getLoginPw().equals(loginPw) == false) {
+			return Util.msgAndBack("비밀번호가 일치하지 않습니다.");
 		}
 		
-		// 세션~
+		if ( memberService.isAdmin(existingMember) == false ) {
+			return Util.msgAndBack("관리자만 접근할 수 있는 페이지 입니다.");
+		}
+		//세션~
 		session.setAttribute("loginedMemberId", existingMember.getId());
-		return new ResultData("S-1", String.format("%s님 환영합니다♥", existingMember.getNickname()));
+		
+		String msg = String.format("%s님 환영합니다.", existingMember.getNickname());
+		redirectUrl = Util.ifEmpty(redirectUrl, "../home/main");
+		
+		return Util.msgAndReplace(msg, redirectUrl);
 	}
 	
-	
-	
+
 	// 회원수정
 	@RequestMapping("/adm/member/doModify")
 	@ResponseBody
@@ -77,6 +82,18 @@ import com.sbs.untact.service.MemberService;
 		
 		return memberService.modifyMember(param);
 	}
+	
+	
+	
+	// 로그아웃
+	@RequestMapping("/adm/member/doLogout")
+	@ResponseBody
+	public String doLogout(HttpSession session) {
+		session.removeAttribute("loginedMemberId");
+		
+		return Util.msgAndReplace("로그아웃 되었습니다.", "../member/login");
+	}
+	
 	
 }
 	

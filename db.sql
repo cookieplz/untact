@@ -48,7 +48,6 @@ CREATE TABLE `member`(
 	`email` CHAR(100) NOT NULL,
 	`cellphoneNo` CHAR(20) NOT NULL
 	
-		
 );
 
 # 회원 테이블 데이터 생성
